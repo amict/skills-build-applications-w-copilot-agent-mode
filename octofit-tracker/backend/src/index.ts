@@ -1,17 +1,16 @@
-import cors from 'cors';
-import express from 'express';
-import './config/database.js';
-
-const app = express();
-const port = Number(process.env.PORT ?? 8000);
-
-app.use(cors());
-app.use(express.json());
+import { connectDatabase } from './config/database.js';
+import app, { startServer } from './server.js';
 
 app.get('/api/health', (_request, response) => {
   response.json({ status: 'ok' });
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`OctoFit API listening on port ${port}`);
+async function bootstrap() {
+  await connectDatabase();
+  startServer();
+}
+
+bootstrap().catch((error) => {
+  console.error('Failed to start OctoFit API:', error);
+  process.exit(1);
 });
