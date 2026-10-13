@@ -1,16 +1,33 @@
-# React + Vite
+# OctoFit Tracker frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The React 19 and Vite presentation tier reads activities, leaderboard entries,
+teams, users, and workouts from the API on port `8000`.
 
-Currently, two official plugins are available:
+## Configure the API URL
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+When running the frontend in Codespaces, `VITE_CODESPACE_NAME` must be defined
+so the frontend can reach the forwarded API port. Add the Codespace name to
+`.env.local` in this directory:
 
-## React Compiler
+```dotenv
+VITE_CODESPACE_NAME=your-codespace-name
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Vite uses this value to form
+`https://<VITE_CODESPACE_NAME>-8000.app.github.dev`. Restart Vite after
+changing `.env.local`. Do not include the protocol or the `-8000.app.github.dev`
+suffix in the value.
 
-## Expanding the Oxlint configuration
+For local development outside Codespaces, the variable can be omitted; the
+frontend safely falls back to `http://localhost:8000`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Run the frontend
+
+From the repository root, start the development server with:
+
+```bash
+npm run dev --prefix octofit-tracker/frontend
+```
+
+Ensure the backend is running and port `8000` is forwarded when working in
+Codespaces.
