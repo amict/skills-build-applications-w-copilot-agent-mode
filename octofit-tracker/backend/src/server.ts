@@ -1,5 +1,6 @@
 import cors from 'cors';
-import express from 'express';
+import express, { type ErrorRequestHandler } from 'express';
+import type { Model } from 'mongoose';
 
 import Activity from './models/Activity.js';
 import Leaderboard from './models/Leaderboard.js';
@@ -16,14 +17,7 @@ const baseUrl = process.env.CODESPACE_NAME
 app.use(cors());
 app.use(express.json());
 
-const getResourceData = async (Model: any) => {
-  try {
-    return await Model.find({}).lean();
-  } catch (error) {
-    console.error(`Error fetching ${Model.modelName}:`, error);
-    return [];
-  }
-};
+const getResourceData = <T>(model: Model<T>) => model.find({}).lean().exec();
 
 app.get('/api/users/', async (_request, response) => {
   response.json({ baseUrl, users: await getResourceData(User) });
@@ -44,6 +38,13 @@ app.get('/api/leaderboard/', async (_request, response) => {
 app.get('/api/workouts/', async (_request, response) => {
   response.json({ baseUrl, workouts: await getResourceData(Workout) });
 });
+
+const handleError: ErrorRequestHandler = (error, _request, response, _next) => {
+  console.error('API request failed:', error);
+  response.status(500).json({ error: 'Internal server error' });
+};
+
+app.use(handleError);
 
 export function startServer() {
   app.listen(port, '0.0.0.0', () => {
